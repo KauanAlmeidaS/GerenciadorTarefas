@@ -1,0 +1,140 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color:#f1f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+header {
+    background-color: #0095f6;
+    color: #fff;
+    padding: 20px 0;
+    width: 100%; 
+    left: 0; 
+    right: 0; 
+    position: fixed; 
+    top: 0; 
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin: 0; 
+    text-align: center; 
+}
+
+
+.card {
+    width: 360px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+.card h1 {
+    background-color: #0095f6;
+    color: #ffffff;
+    padding: 20px;
+    margin: 0 -20px 20px -20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.card label {
+    display: block;
+    margin: 20px 0 5px 0;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+}
+
+.card input[type="text"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.card button {
+    background-color: #0095f6;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.card button:hover {
+    background-color: #007bb5;
+}
+
+.card ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.card ul li {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 5px;
+}
+
+.card ul li.ok {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.card ul li input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.card ul li button {
+    background-color: #e74c3c;
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.card ul li button:hover {
+    background-color: #c0392b;
+}
+
+.card hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 20px 0;
+}
+
+footer {
+    margin-top: 20px;
+    padding: 5px 0;
+    background-color: #0095f6;
+    color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    right: 0;
+}
+
+footer p {
+    font-size: 0.9em;
+}

@@ -1,0 +1,135 @@
+<head>
+    <title>Lista de Tarefas</title>
+    <link rel="stylesheet" href="tarefas.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/pouchdb-9.0.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Inicializa o PouchDB local
+        var db = new PouchDB("tarefas");
+
+        // Configura o CouchDB remoto com usuário e senha de administração
+        var remoteCouch = 'http://admin:password@127.0.0.1:5984/tarefas';
+
+        var documentos = [];
+
+        db.changes({
+            since: 'now',
+            live: true
+        }).on('change', carregarTarefas);
+
+        function carregarTarefas() {
+            $('#listaTarefas').empty();
+            db.allDocs({ include_docs: true, descending: true }).then(function(result) {
+                documentos = result.rows;
+                documentos.forEach(function(row) {
+                    var tarefa = row.doc;
+                    var checkedAttr = tarefa.completa ? 'checked' : '';
+                    var checkboxClass = tarefa.completa ? 'completa' : '';
+                    $('#listaTarefas').append(
+                        '<li data-id="' + tarefa._id + '">' +
+                            '<input type="checkbox" class="' + checkboxClass + '" data-id="' + tarefa._id + '" ' + checkedAttr + '/>' +
+                            '<span>' + tarefa.titulo + '</span>' +
+                            '<button class="remover" data-id="' + tarefa._id + '">[x]</button>' +
+                        '</li>'
+                    );
+                });
+            });
+        }
+
+        function adicionarTarefa(texto) {
+            var tarefa = {
+                _id: new Date().toISOString(),
+                titulo: texto,
+                completa: false
+            };
+            db.put(tarefa).then(function(response) {
+                alert('Tarefa adicionada com sucesso!');
+                carregarTarefas();
+            }).catch(function(err) {
+                console.error('Erro ao adicionar tarefa:', err);
+            });
+        }
+
+        function completarTarefa(id, completa) {
+            db.get(id).then(function(doc) {
+                doc.completa = completa;
+                return db.put(doc);
+            }).then(function(response) {
+                console.log('Tarefa atualizada com sucesso:', response);
+            }).catch(function(err) {
+                console.error('Erro ao atualizar tarefa:', err);
+            });
+        }
+
+        function removerTarefa(id) {
+            if (confirm("Deseja remover essa tarefa?")) {
+                db.get(id).then(function(doc) {
+                    return db.remove(doc);
+                }).then(function(response) {
+                    console.log('Tarefa removida com sucesso:', response);
+                    carregarTarefas();
+                }).catch(function(err) {
+                    console.error('Erro ao remover tarefa:', err);
+                });
+            }
+        }
+
+        $('#btNovaTarefa').click(function() {
+            var tarefaTexto = $('#txtTarefa').val().trim();
+            if (tarefaTexto) {
+                adicionarTarefa(tarefaTexto);
+            } else {
+                alert('Por favor, digite o título da tarefa.');
+            }
+        });
+
+        $('#btSincronizar').click(function() {
+            var opts = { live: true, retry: true };
+
+            // Replicação
+            var replication = db.replicate.to(remoteCouch, opts);
+
+            // Tratamento de erros durante a replicação
+            replication.on('error', function(err) {
+                console.error('Erro na sincronização:', err);
+            });
+        });
+
+        $(document).on('change', 'input[type="checkbox"]', function() {
+            var id = $(this).attr('data-id');
+            var completa = $(this).prop('checked');
+            completarTarefa(id, completa);
+        });
+
+        $(document).on('click', 'button.remover', function() {
+            var id = $(this).attr('data-id');
+            removerTarefa(id);
+        });
+
+        carregarTarefas();
+    });
+    </script>
+</head>
+
+<body>
+  <center>
+    <header>
+        <h1>Gerenciador de Tarefas</h1>
+    </header>
+    <div class="card">
+        <h2>Lista de Tarefas</h2>
+        <label for="txtTarefa">Tarefas</label>
+        <input type="text" id="txtTarefa">
+        <button id="btNovaTarefa">Adicionar Tarefa</button>
+        <hr />
+        <ul id="listaTarefas"></ul>
+        <hr />
+        <button id="btSincronizar">Sincronizar</button>
+    </div>
+    <footer>
+        <p>&copy; 2024 Gerenciador de Tarefas.</p>
+    </footer>
+  </center>
+</body>
+</html>
